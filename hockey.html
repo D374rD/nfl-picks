@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hockey picks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --turf: #1d3a2b;
+  --turf-deep: #152b20;
+  --turf-line: #2b5140;
+  --chalk: #f1efe6;
+  --chalk-dim: #b7c4bb;
+  --sage: #86a391;
+  --gold: #ffb81c;
+  --flag: #ff7a4d;
+}
+* { box-sizing: border-box; }
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+html { background: var(--turf-deep); }
+body {
+  margin: 0;
+  color: var(--chalk);
+  font-family: "Barlow", "Segoe UI", system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.5;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 79px, rgba(241,239,230,.045) 79px 81px),
+    linear-gradient(var(--turf), var(--turf-deep));
+  min-height: 100vh;
+}
+main { max-width: 760px; margin: 0 auto; padding: 28px 20px 64px; }
+h1, h2, .num, .odds, .bet-name {
+  font-family: "Barlow Condensed", "Arial Narrow", "Segoe UI", sans-serif;
+}
+.hero { display: flex; align-items: flex-end; gap: 22px; margin: 8px 0 36px; }
+.num {
+  font-size: clamp(120px, 30vw, 200px);
+  line-height: .78;
+  font-weight: 800;
+  color: var(--chalk);
+  letter-spacing: -2px;
+  position: relative;
+  padding-left: 34px;
+}
+.num::before {  /* yard-marker arrow */
+  content: "";
+  position: absolute; left: 0; top: 50%;
+  border-top: 16px solid transparent; border-bottom: 16px solid transparent;
+  border-right: 22px solid var(--gold);
+  transform: translateY(-50%);
+}
+.hero-text h1 { font-size: 34px; line-height: 1.05; margin: 0 0 8px; font-weight: 700; }
+.hero-text p { margin: 0; color: var(--chalk-dim); font-size: 15px; }
+h2 { font-size: 28px; font-weight: 700; margin: 44px 0 6px; }
+.sub { color: var(--chalk-dim); font-size: 15px; margin: 0 0 16px; max-width: 62ch; }
+
+.bet {
+  border-left: 4px solid var(--gold);
+  background: rgba(21,43,32,.72);
+  padding: 16px 18px;
+  margin: 0 0 12px;
+  border-radius: 0 10px 10px 0;
+}
+.bet-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.bet-name { font-size: 30px; font-weight: 700; line-height: 1.05; }
+.odds { font-size: 30px; font-weight: 700; color: var(--gold); }
+.bet-meta { color: var(--chalk-dim); font-size: 15px; margin: 2px 0 12px; }
+.bars { display: grid; grid-template-columns: 5.5em 1fr 3em; gap: 6px 10px; align-items: center; font-size: 14px; }
+.bar { height: 8px; background: var(--turf-line); border-radius: 4px; overflow: hidden; }
+.bar span { display: block; height: 100%; background: var(--chalk); }
+.bar.dk span { background: var(--sage); }
+.bet-foot { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 12px; font-size: 15px; }
+.bet-foot b { color: var(--chalk); }
+.warn { color: var(--flag); font-size: 15px; margin-top: 8px; }
+
+.scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; min-width: 560px; }
+th { text-align: left; font-weight: 600; color: var(--chalk-dim); padding: 6px 10px 6px 0; border-bottom: 2px solid var(--turf-line); }
+td { padding: 9px 10px 9px 0; border-bottom: 1px solid var(--turf-line); vertical-align: top; }
+td.gap { color: var(--gold); }
+
+.news-game { margin: 0 0 18px; }
+.news-game h3 { font-size: 17px; margin: 0 0 6px; }
+.news-game ul { margin: 0; padding-left: 18px; }
+.news-game li { margin: 3px 0; color: var(--chalk-dim); }
+.news-game li.hot { color: var(--chalk); }
+.news-game li.hot::marker { color: var(--flag); }
+.news-game small { color: var(--sage); }
+
+.empty { color: var(--chalk-dim); padding: 18px 0; }
+
+a.slip {
+  display: inline-block; margin-top: 14px; padding: 11px 18px; border-radius: 8px;
+  background: var(--gold); color: #1b1300; font-weight: 700; text-decoration: none; font-size: 16px;
+}
+a.slip:hover { filter: brightness(1.08); }
+a.slip:focus-visible { outline: 3px solid var(--chalk); outline-offset: 2px; }
+.books { margin-top: 14px; display: grid; gap: 6px; }
+.book { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center;
+  padding: 8px 10px; border-radius: 8px; background: rgba(241,239,230,.04); font-size: 15px; }
+.book.best { background: rgba(255,184,28,.12); box-shadow: inset 0 0 0 1px rgba(255,184,28,.45); }
+.book .bname small { display: block; color: var(--sage); font-size: 12px; }
+.book .bname small.howfind { color: var(--chalk-dim); font-size: 13px; margin-top: 2px; }
+.book .bprice { font-family: "Barlow Condensed", "Arial Narrow", sans-serif; font-size: 22px; font-weight: 700; }
+.book.best .bprice { color: var(--gold); }
+.book a { padding: 7px 12px; border-radius: 6px; background: var(--chalk); color: #14231a;
+  font-weight: 700; text-decoration: none; font-size: 14px; white-space: nowrap; }
+.book.best a { background: var(--gold); color: #1b1300; }
+.book a:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.book .nolink { color: var(--sage); font-size: 13px; }
+.badge { display: inline-block; vertical-align: middle; margin-left: 8px; padding: 2px 8px;
+  border-radius: 999px; background: var(--gold); color: #1b1300; font-family: "Barlow", sans-serif;
+  font-size: 12px; font-weight: 700; }
+.chartwrap { margin: 6px 0 12px; }
+.chart-title { font-size: 14px; color: var(--chalk-dim); margin-bottom: 2px; }
+svg.chart { width: 100%; max-width: 480px; height: auto; display: block; }
+svg.chart .cv { fill: var(--chalk); font-size: 11px; font-family: "Barlow", sans-serif; }
+svg.chart .cl { fill: var(--chalk-dim); font-size: 10px; font-family: "Barlow", sans-serif; }
+svg.chart .cl.dim { fill: var(--sage); }
+.lineref { stroke: var(--chalk); stroke-width: 1.2; stroke-dasharray: 4 3; }
+svg.spark { width: 200px; height: 44px; display: block; }
+ul.why { margin: 4px 0 12px; padding-left: 20px; font-size: 15px; color: var(--chalk-dim); }
+ul.why li { margin: 2px 0; }
+.slip-note { display: block; color: var(--chalk-dim); font-size: 13px; margin-top: 6px; }
+details.howto { margin-top: 12px; border-top: 1px solid var(--turf-line); padding-top: 10px; }
+details.howto summary { cursor: pointer; color: var(--gold); font-weight: 600; font-size: 15px; }
+details.howto summary:focus-visible, details.guide summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+details.howto ol { margin: 10px 0 6px; padding-left: 22px; font-size: 15px; }
+details.howto li { margin: 4px 0; }
+.check { background: rgba(255,184,28,.08); border-left: 3px solid var(--gold); padding: 8px 12px; font-size: 15px; margin: 8px 0 2px; }
+details.guide { background: rgba(21,43,32,.72); border-radius: 10px; padding: 14px 18px; margin: 0 0 8px; }
+.tabs { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 10px; }
+.tabs button { flex: none; font: 600 15px "Barlow", "Segoe UI", sans-serif; color: var(--chalk);
+  background: rgba(241,239,230,.06); border: 1px solid var(--turf-line); border-radius: 999px;
+  padding: 8px 14px; cursor: pointer; }
+.tabs button span { color: var(--sage); margin-left: 4px; }
+.tabs button[aria-selected="true"] { background: var(--gold); color: #1b1300; border-color: var(--gold); }
+.tabs button[aria-selected="true"] span { color: #1b1300; }
+.tabs button:focus-visible { outline: 3px solid var(--chalk); outline-offset: 2px; }
+.slipbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; flex-wrap: wrap;
+  gap: 8px; align-items: center; background: var(--turf-deep); padding: 10px 0; margin-bottom: 8px; }
+a.slipall { padding: 10px 16px; border-radius: 8px; background: var(--gold); color: #1b1300;
+  font-weight: 700; text-decoration: none; }
+a.slipall.fd { background: var(--chalk); color: #14231a; }
+a.slipall:focus-visible { outline: 3px solid var(--chalk); outline-offset: 2px; }
+.slipbar .slip-note { flex-basis: 100%; }
+[hidden] { display: none !important; }
+details.riskier { margin-top: 28px; }
+.scorecard { display: grid; gap: 8px; margin-bottom: 12px; }
+.sc { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; font-size: 15px;
+  background: rgba(255,184,28,.08); border-left: 3px solid var(--gold); padding: 10px 14px; border-radius: 0 8px 8px 0; }
+.sc em { font-style: normal; font-weight: 700; }
+.record { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 8px 0 14px; }
+.stat { background: rgba(21,43,32,.72); border-radius: 10px; padding: 12px 14px; }
+.stat .big { font-family: "Barlow Condensed", "Arial Narrow", sans-serif; font-size: 34px; font-weight: 700; line-height: 1; }
+.stat .lbl { color: var(--chalk-dim); font-size: 13px; margin-top: 4px; }
+svg.run { width: 100%; max-width: 640px; height: auto; display: block; margin: 6px 0 4px; }
+svg.run .zero { stroke: var(--chalk-dim); stroke-dasharray: 4 4; stroke-width: 1; }
+svg.run .ln { fill: none; stroke: var(--gold); stroke-width: 2.5; }
+svg.run text { fill: var(--chalk-dim); font-size: 11px; font-family: "Barlow", sans-serif; }
+details.week { background: rgba(21,43,32,.72); border-radius: 10px; padding: 10px 14px; margin: 0 0 8px; }
+details.week summary { cursor: pointer; font-weight: 600; }
+details.week summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+ul.picks { list-style: none; padding: 0; margin: 10px 0 2px; font-size: 15px; }
+ul.picks li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-top: 1px solid var(--turf-line); }
+ul.picks small { display: block; color: var(--sage); font-size: 13px; }
+nav.menu { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: -18px 0 22px; font-size: 15px; }
+nav.menu a, .snap a, .archived a { color: var(--gold); text-decoration: none; font-weight: 600; }
+nav.menu a:hover, .snap a:hover, .archived a:hover { text-decoration: underline; }
+.archived { background: rgba(255,184,28,.12); border-left: 3px solid var(--gold); padding: 10px 14px;
+  border-radius: 0 8px 8px 0; margin: -10px 0 18px; font-size: 15px; }
+.snap { margin: 8px 0 0; font-size: 14px; }
+svg.run rect.all { fill: var(--chalk); } svg.run rect.topb { fill: var(--gold); }
+svg.run rect.neg { opacity: .55; }
+.legend { font-size: 13px; color: var(--chalk-dim); margin: 0 0 14px; }
+.legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin: 0 4px 0 10px; vertical-align: middle; }
+.legend .sw.all { background: var(--chalk); margin-left: 0; } .legend .sw.topb { background: var(--gold); }
+.live-games { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.lg { background: rgba(21,43,32,.72); border-radius: 10px; padding: 12px 14px; }
+.lg .st { font-size: 13px; color: var(--chalk-dim); display: flex; justify-content: space-between; }
+.lg .st .dot { color: var(--flag); font-weight: 700; }
+.lg .row { display: flex; justify-content: space-between; font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+  font-size: 24px; font-weight: 700; }
+.lg ul { list-style: none; margin: 8px 0 0; padding: 0; font-size: 14px; }
+.lg li { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; border-top: 1px solid var(--turf-line); }
+.live-pill { display: inline-block; font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 999px;
+  margin-bottom: 8px; background: rgba(241,239,230,.1); }
+.win { color: #7ee2a8; } .lose { color: var(--flag); } .push, .pre { color: var(--chalk-dim); }
+.live-pill.win { background: rgba(126,226,168,.15); } .live-pill.lose { background: rgba(255,122,77,.15); }
+.badge.small { font-size: 11px; padding: 1px 6px; }
+h3.minor { font-size: 17px; margin: 22px 0 8px; }
+.split { margin: 0 0 14px; }
+.split-top { display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 4px; }
+.split-top span { color: var(--chalk-dim); }
+.split-bar { height: 12px; border-radius: 6px; background: var(--sage); overflow: hidden; }
+.split-bar span { display: block; height: 100%; background: var(--gold); }
+.split-labels { display: flex; justify-content: space-between; font-size: 14px; color: var(--chalk-dim); margin-top: 4px; }
+.ai.ok { color: var(--chalk); font-size: 15px; margin-top: 8px; padding: 8px 12px;
+  border-left: 3px solid var(--sage); background: rgba(134,163,145,.12); }
+details.riskier h2 { font-size: 24px; }
+details.guide summary { cursor: pointer; font-family: "Barlow Condensed", "Arial Narrow", sans-serif; font-size: 24px; font-weight: 700; }
+details.guide h3 { font-size: 17px; margin: 18px 0 4px; }
+details.guide ol, details.guide ul { padding-left: 22px; margin: 6px 0; }
+details.guide li { margin: 5px 0; }
+details.guide p { margin: 6px 0; max-width: 62ch; }
+.ticket { background: rgba(21,43,32,.72); border-radius: 10px; padding: 12px 16px; margin: 0 0 10px; }
+.ticket-top { display: flex; justify-content: space-between; font-size: 18px; }
+.ticket-top span { color: var(--gold); font-weight: 700; }
+.ticket ul { margin: 6px 0; padding-left: 20px; }
+.ticket li { margin: 3px 0; }
+.ticket a.legadd { display: inline-block; margin-left: 8px; padding: 3px 12px; border-radius: 6px;
+  background: var(--gold); color: #1b1300; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.ticket a.legadd:focus-visible { outline: 3px solid var(--chalk); outline-offset: 2px; }
+.ticket .howadd { font-size: 14px; color: var(--sage); margin: 6px 0 4px; }
+.ticket a.slipall.alt { font-size: 14px; padding: 6px 12px; }
+.ticket-stats { display: flex; flex-wrap: wrap; gap: 4px 18px; color: var(--sage); font-size: 14px; }
+details.updates { margin-top: 32px; }
+details.updates summary { font-size: 20px; }
+details.updates .upd { border-top: 1px solid var(--turf-line); margin-top: 14px; padding-top: 4px; }
+details.updates .upd h3 { font-size: 17px; margin: 10px 0 2px; }
+details.updates .tech { font-size: 14px; color: var(--sage); }
+footer { margin-top: 48px; color: var(--sage); font-size: 14px; max-width: 62ch; }
+@media (max-width: 480px) {
+  .hero { gap: 14px; }
+  .hero-text h1 { font-size: 27px; }
+  .bet-name, .odds { font-size: 25px; }
+}
+</style>
+</head><body><main>
+<header class="hero"><div class="num" aria-hidden="true">🏒</div><div class="hero-text">
+<h1>Hockey picks</h1><p>17 NHL games in the next two days, 13 bets flagged. Odds from DraftKings. Updated Wednesday Oct 7, 6:02 AM.</p>
+</div></header>
+<nav class="menu" aria-label="Sections"><a href="index.html">Football</a><a href="#picks">Picks</a><a href="#tickets">Tickets</a><a href="#games">All games</a></nav>
+<p class="sub"><b>New and experimental.</b> The hockey model only knows team results so far: no starting goalies, no injuries, and this season is only a few games old, so it leans on last season. Hockey is close to a coin flip. Treat these as opinions, bet small, and skip anything where the starting goalie changed.</p>
+<p class="sub"><b>How it tested:</b> on 2,624 games from the last two seasons, predicted only from games before each one, it picked the winner 56% of the time, against 54% for always picking the home team, and its win chances were well calibrated. That is a small edge in prediction, not proof it beats the sportsbook, which also knows all this. It was no better than the league average at predicting total goals.</p>
+<h2 id="picks">Top hockey picks</h2><p class="sub">One moneyline or puck-line bet per game, where the model and DraftKings disagree the most. Edges over 12 points are left out: that usually means news the model can’t see, like a backup goalie. Over/unders are left out too: in testing on two past seasons the model predicted total goals no better than the league average. Sportsbooks usually post odds a day or so ahead, so later games fill in as they do.</p><div class="scroll"><table style="min-width:560px"><thead><tr><th>Bet</th><th>Model</th><th>DraftKings (no-vig)</th><th>Edge</th><th>Best price</th><th></th></tr></thead><tbody><tr><td><b>OTT to win (-122)</b><br><small>PHI @ OTT · Thu Oct 8, 7:10 PM ET</small></td><td>60%</td><td>53%</td><td>+6.9%</td><td>-122 DraftKings</td><td><a href="https://sportsbook.draftkings.com/?outcomes=0ML85514978_1" target="_blank" rel="noopener">Add</a></td></tr><tr><td><b>WPG to win (+154)</b><br><small>COL @ WPG · Wed Oct 7, 7:30 PM ET</small></td><td>44%</td><td>38%</td><td>+6.3%</td><td>+155 BetRivers</td><td><a href="https://sportsbook.draftkings.com/?outcomes=0ML86627035_1" target="_blank" rel="noopener">Add</a></td></tr><tr><td><b>PIT to win (+136)</b><br><small>PIT @ WSH · Wed Oct 7, 7:40 PM ET</small></td><td>46%</td><td>41%</td><td>+5.5%</td><td>+140 theScore Bet</td><td><a href="https://sportsbook.draftkings.com/?outcomes=0ML85514974_3" target="_blank" rel="noopener">Add</a></td></tr><tr><td><b>STL to win (-122)</b><br><small>SJS @ STL · Thu Oct 8, 8:10 PM ET</small></td><td>57%</td><td>53%</td><td>+4.9%</td><td>-122 DraftKings</td><td><a href="https://sportsbook.draftkings.com/?outcomes=0ML85514972_1" target="_blank" rel="noopener">Add</a></td></tr><tr><td><b>ANA to win (+110)</b><br><small>EDM @ ANA · Wed Oct 7, 10:00 PM ET</small></td><td>50%</td><td>46%</td><td>+4.7%</td><td>+115 BetMGM</td><td><a href="https://sportsbook.draftkings.com/?outcomes=0ML86627037_1" target="_blank" rel="noopener">Add</a></td></tr></tbody></table></div><h2 id="tickets">Hockey tickets</h2><p class="sub">Same cautious method as the football page: each bet’s chance is pulled halfway back toward the market, legs come from different games, and a parlay is one bet that loses if any leg misses. A few dollars at most.</p><div class="ticket"><div class="ticket-top"><b>3-leg long shot</b> <span>+1668</span></div><ul><li>WPG to win (+154) <small>(+154, COL @ WPG; cautious 41%, model 44%)</small> <a class="legadd" href="https://sportsbook.draftkings.com/?outcomes=0ML86627035_1" target="_blank" rel="noopener">Add</a></li><li>PIT to win (+136) <small>(+136, PIT @ WSH; cautious 43%, model 46%)</small> <a class="legadd" href="https://sportsbook.draftkings.com/?outcomes=0ML85514974_3" target="_blank" rel="noopener">Add</a></li><li>OTT -1.5 (+195) <small>(+195, PHI @ OTT; cautious 35%, model 38%)</small> <a class="legadd" href="https://sportsbook.draftkings.com/?outcomes=0HC85514978N150_1" target="_blank" rel="noopener">Add</a></li></ul><div class="ticket-stats"><span>Cautious chance to hit: <b>6%</b> (model says 8%)</span><span>Fair price: +1506</span><span>$5 would win $83.42</span></div><p class="howadd">Tap <b>Add</b> on each leg (each one goes into your DraftKings bet slip), then open the <b>Parlay</b> tab and enter your stake.</p></div><div class="ticket"><div class="ticket-top"><b>3-leg long shot</b> <span>+991</span></div><ul><li>OTT to win (-122) <small>(-122, PHI @ OTT; cautious 56%, model 60%)</small> <a class="legadd" href="https://sportsbook.draftkings.com/?outcomes=0ML85514978_1" target="_blank" rel="noopener">Add</a></li><li>WPG to win (+154) <small>(+154, COL @ WPG; cautious 41%, model 44%)</small> <a class="legadd" href="https://sportsbook.draftkings.com/?outcomes=0ML86627035_1" target="_blank" rel="noopener">Add</a></li><li>PIT to win (+136) <small>(+136, PIT @ WSH; cautious 43%, model 46%)</small> <a class="legadd" href="https://sportsbook.draftkings.com/?outcomes=0ML85514974_3" target="_blank" rel="noopener">Add</a></li></ul><div class="ticket-stats"><span>Cautious chance to hit: <b>10%</b> (model says 12%)</span><span>Fair price: +904</span><span>$5 would win $49.54</span></div><p class="howadd">Tap <b>Add</b> on each leg (each one goes into your DraftKings bet slip), then open the <b>Parlay</b> tab and enter your stake.</p></div><div class="ticket"><div class="ticket-top"><b>3-leg long shot</b> <span>+893</span></div><ul><li>WPG +1.5 (-166) <small>(-166, COL @ WPG; cautious 63%, model 66%)</small> <a class="legadd" href="https://sportsbook.draftkings.com/?outcomes=0HC86627035P150_1" target="_blank" rel="noopener">Add</a></li><li>OTT -1.5 (+195) <small>(+195, PHI @ OTT; cautious 35%, model 38%)</small> <a class="legadd" href="https://sportsbook.draftkings.com/?outcomes=0HC85514978N150_1" target="_blank" rel="noopener">Add</a></li><li>ANA to win (+110) <small>(+110, EDM @ ANA; cautious 48%, model 50%)</small> <a class="legadd" href="https://sportsbook.draftkings.com/?outcomes=0ML86627037_1" target="_blank" rel="noopener">Add</a></li></ul><div class="ticket-stats"><span>Cautious chance to hit: <b>11%</b> (model says 12%)</span><span>Fair price: +845</span><span>$5 would win $44.63</span></div><p class="howadd">Tap <b>Add</b> on each leg (each one goes into your DraftKings bet slip), then open the <b>Parlay</b> tab and enter your stake.</p></div><div class="ticket"><div class="ticket-top"><b>3-leg long shot</b> <span>+512</span></div><ul><li>OTT to win (-122) <small>(-122, PHI @ OTT; cautious 56%, model 60%)</small> <a class="legadd" href="https://sportsbook.draftkings.com/?outcomes=0ML85514978_1" target="_blank" rel="noopener">Add</a></li><li>WPG +1.5 (-166) <small>(-166, COL @ WPG; cautious 63%, model 66%)</small> <a class="legadd" href="https://sportsbook.draftkings.com/?outcomes=0HC86627035P150_1" target="_blank" rel="noopener">Add</a></li><li>ANA to win (+110) <small>(+110, EDM @ ANA; cautious 48%, model 50%)</small> <a class="legadd" href="https://sportsbook.draftkings.com/?outcomes=0ML86627037_1" target="_blank" rel="noopener">Add</a></li></ul><div class="ticket-stats"><span>Cautious chance to hit: <b>17%</b> (model says 20%)</span><span>Fair price: +491</span><span>$5 would win $25.62</span></div><p class="howadd">Tap <b>Add</b> on each leg (each one goes into your DraftKings bet slip), then open the <b>Parlay</b> tab and enter your stake.</p></div><h2 id="games">Every game</h2><div class="scroll"><table style="min-width:620px"><thead><tr><th>Game</th><th>Start</th><th>Model win chance</th><th>DraftKings moneyline</th><th>Model goals</th><th>DraftKings total</th></tr></thead><tbody><tr><td>PIT @ WSH</td><td>Wed Oct 7, 7:30 PM ET</td><td>PIT 46% / WSH 54%</td><td>PIT +136 / WSH -162</td><td>6.2</td><td>6.5</td></tr><tr><td>COL @ WPG</td><td>Wed Oct 7, 7:30 PM ET</td><td>COL 56% / WPG 44%</td><td>COL -185 / WPG +154</td><td>5.9</td><td>6.5</td></tr><tr><td>EDM @ ANA</td><td>Wed Oct 7, 10:00 PM ET</td><td>EDM 50% / ANA 50%</td><td>EDM -130 / ANA +110</td><td>6.2</td><td>6.5</td></tr><tr><td>UTA @ BOS</td><td>Thu Oct 8, 7:00 PM ET</td><td>UTA 49% / BOS 51%</td><td>Not posted yet</td><td>6.0</td><td>Not posted yet</td></tr><tr><td>DAL @ BUF</td><td>Thu Oct 8, 7:00 PM ET</td><td>DAL 46% / BUF 54%</td><td>Not posted yet</td><td>6.1</td><td>Not posted yet</td></tr><tr><td>NSH @ MTL</td><td>Thu Oct 8, 7:00 PM ET</td><td>NSH 42% / MTL 58%</td><td>Not posted yet</td><td>6.1</td><td>Not posted yet</td></tr><tr><td>PHI @ OTT</td><td>Thu Oct 8, 7:00 PM ET</td><td>PHI 40% / OTT 60%</td><td>PHI +102 / OTT -122</td><td>5.9</td><td>5.5</td></tr><tr><td>MIN @ TBL</td><td>Thu Oct 8, 7:00 PM ET</td><td>MIN 45% / TBL 55%</td><td>Not posted yet</td><td>6.0</td><td>Not posted yet</td></tr><tr><td>VAN @ CAR</td><td>Thu Oct 8, 7:00 PM ET</td><td>VAN 33% / CAR 67%</td><td>Not posted yet</td><td>6.2</td><td>Not posted yet</td></tr><tr><td>CHI @ NYI</td><td>Thu Oct 8, 7:30 PM ET</td><td>CHI 40% / NYI 60%</td><td>Not posted yet</td><td>5.8</td><td>Not posted yet</td></tr><tr><td>SJS @ STL</td><td>Thu Oct 8, 8:00 PM ET</td><td>SJS 43% / STL 57%</td><td>SJS +102 / STL -122</td><td>6.1</td><td>5.5</td></tr><tr><td>COL @ CGY</td><td>Thu Oct 8, 9:00 PM ET</td><td>COL 53% / CGY 47%</td><td>Not posted yet</td><td>5.9</td><td>Not posted yet</td></tr><tr><td>TOR @ VGK</td><td>Thu Oct 8, 10:00 PM ET</td><td>TOR 40% / VGK 60%</td><td>Not posted yet</td><td>6.1</td><td>Not posted yet</td></tr><tr><td>SEA @ DET</td><td>Fri Oct 9, 7:00 PM ET</td><td>SEA 45% / DET 55%</td><td>Not posted yet</td><td>5.9</td><td>Not posted yet</td></tr><tr><td>NYR @ WSH</td><td>Fri Oct 9, 7:00 PM ET</td><td>NYR 45% / WSH 55%</td><td>Not posted yet</td><td>6.0</td><td>Not posted yet</td></tr><tr><td>PIT @ CBJ</td><td>Fri Oct 9, 7:00 PM ET</td><td>PIT 48% / CBJ 52%</td><td>Not posted yet</td><td>6.2</td><td>Not posted yet</td></tr><tr><td>ANA @ WPG</td><td>Fri Oct 9, 8:00 PM ET</td><td>ANA 46% / WPG 54%</td><td>Not posted yet</td><td>6.0</td><td>Not posted yet</td></tr></tbody></table></div><footer><p>Hockey picks are new and unproven. This is a hobby model, not a sure thing:
+bet small amounts you’re fine losing. Odds API credits left this month: 429.</p><p><a href="index.html">Back to the football page</a></p></footer>
+</main></body></html>
