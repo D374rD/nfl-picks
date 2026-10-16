@@ -210,6 +210,8 @@ details.guide p { margin: 6px 0; max-width: 62ch; }
 .ticket-top span { color: var(--gold); font-weight: 700; }
 .ticket ul { margin: 6px 0; padding-left: 20px; }
 .ticket li { margin: 3px 0; }
+.stale { color: var(--gold); }
+.help { margin-top: 10px; font-size: 14px; }
 .ticket a.legadd { display: inline-block; margin-left: 8px; padding: 3px 12px; border-radius: 6px;
   background: var(--gold); color: #1b1300; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
 .ticket a.legadd:focus-visible { outline: 3px solid var(--chalk); outline-offset: 2px; }
@@ -230,9 +232,9 @@ footer { margin-top: 48px; color: var(--sage); font-size: 14px; max-width: 62ch;
 </style>
 </head><body><main>
 <header class="hero"><div class="hero-text">
-<h1>NBA: DraftKings vs the sharp market</h1><p>0 games coming up, 0 DraftKings prices worth more than the fair price. Updated Thursday Oct 15, 3:00 PM (no games in the next 36 hours).</p>
+<h1>NBA: DraftKings vs the sharp market</h1><p>0 games coming up, 0 DraftKings prices worth more than the fair price. Updated Thursday Oct 15, 8:59 PM (no games in the next 36 hours).</p>
 </div></header>
-<nav class="menu" aria-label="Sections"><a href="index.html">Football (NFL)</a><a href="hockey.html">Hockey</a><a href="cfb.html">College football</a><a href="cbb.html">College basketball</a><a href="#bets">Bets</a><a href="#tickets">Tickets</a><a href="#games">All games</a><a href="#terms">Terms</a></nav>
+<nav class="menu" aria-label="Sections"><a href="index.html">Football (NFL)</a><a href="hockey.html">Hockey</a><a href="cfb.html">College football</a><a href="cbb.html">College basketball</a><a href="#bets">Bets</a><a href="#tickets">Tickets</a><a href="#games">All games</a><a href="#terms">Terms</a><a href="#stakes">Stakes</a></nav>
 <p class="sub"><b>How this works.</b> There is no model for this sport. Instead, each DraftKings price is compared with
 Pinnacle, the sharpest big sportsbook, with Pinnacle's cut removed: that is the <b>fair chance</b>. When DraftKings pays
 more than the fair price, the bet has positive expected value (<b>+EV</b>): over many such bets you'd expect to come out
@@ -282,7 +284,37 @@ limit people who win this way. Bet small. Where Pinnacle doesn't have the same l
 <li><b>Bankroll / units:</b> the money set aside for betting, and a fixed small slice of it per bet (for example 1%). Flat small stakes are the safest way to bet.</li>
 </ul>
 </details>
+
+<details class="guide" id="stakes">
+<summary>Stake guide: how much to bet</summary>
+<p class="sub">No model here has beaten the sportsbooks over time, so the safest way to bet is small and boring.
+Enter the money you have set aside for betting (money you can afford to lose) and these limits update.</p>
+<p><label for="bankroll"><b>My betting bankroll: $</b></label>
+<input id="bankroll" type="number" min="0" step="10" value="200" inputmode="decimal" style="width:7em;font-size:16px;padding:6px 8px;border-radius:6px;border:1px solid var(--turf-line);background:var(--turf-deep);color:var(--chalk)"></p>
+<ul>
+<li><b>One single bet:</b> about <b id="st-single">$2</b> at most (1% of your bankroll).</li>
+<li><b>A parlay or long shot ticket:</b> about <b id="st-parlay">$0.50</b> at most (0.25%). Most parlays lose.</li>
+<li><b>Everything in one week:</b> about <b id="st-week">$10</b> at most (5%). Stop for the week when you reach it.</li>
+<li><b>After a losing week:</b> do not raise your stakes to win it back.</li>
+</ul>
+<p>These are rules of thumb, not advice tailored to you. Set deposit and loss limits in your sportsbook app too.</p>
+</details>
+<script>
+(function () {
+  var b = document.getElementById('bankroll');
+  if (!b) return;
+  function money(x) { return '$' + (x >= 10 ? Math.round(x) : x.toFixed(2).replace(/\.00$/, '')); }
+  function update() {
+    var v = parseFloat(b.value) || 0;
+    document.getElementById('st-single').textContent = money(v * 0.01);
+    document.getElementById('st-parlay').textContent = money(v * 0.0025);
+    document.getElementById('st-week').textContent = money(v * 0.05);
+  }
+  b.addEventListener('input', update);
+  update();
+})();
+</script>
 <h2 id="bets">DraftKings prices above the fair price</h2><p class="empty">Nothing right now (no games in the next 36 hours). Prices move all day, so this changes.</p><h2 id="tickets">Tickets</h2><p class="sub">Legs from the bets above, from different games. A parlay is one bet: every leg must win. Small value on each leg adds up, but so does the risk. A few dollars at most.</p><p class="empty">No tickets: not enough value bets in different games.</p><h2 id="games">Every game</h2><div class="scroll"><table style="min-width:520px"><thead><tr><th>Game</th><th>Start</th><th>DraftKings moneyline</th><th>Fair chance (home)</th></tr></thead><tbody></tbody></table></div><footer><p>This page compares prices; it doesn't predict games. Positive value is an average over
-many bets, not a promise for any one bet. Bet small amounts you’re fine losing. Odds API credits left this month: 341.</p>
-<p><a href="index.html">Back to the football page</a></p></footer>
+many bets, not a promise for any one bet. Bet small amounts you’re fine losing. Odds API credits left this month: 288.0.</p>
+<p><a href="index.html">Back to the football page</a></p><p class="help">Must be 21+. Gambling problem? Call <b>1-800-GAMBLER</b> (24/7, free and confidential).</p></footer>
 </main></body></html>
